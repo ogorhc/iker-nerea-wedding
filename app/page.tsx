@@ -5,24 +5,26 @@ import Image from 'next/image';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import BikeWorld, { Bike } from './components/bike-world-loading';
+
+// Generate particle positions outside component to avoid render-time Math.random calls
+function generateParticlePositions() {
+  const count = 1200;
+  const arr = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const i3 = i * 3;
+    arr[i3 + 0] = (Math.random() - 0.5) * 18; // x
+    arr[i3 + 1] = (Math.random() - 0.5) * 10; // y
+    arr[i3 + 2] = (Math.random() - 0.5) * 18; // z
+  }
+  return arr;
+}
+
+const particlePositions = generateParticlePositions();
 
 function FoggyBackground() {
   const ref = useRef<THREE.Points>(null);
-
-  // Partículas “polvo” en el aire
-  const positions = useMemo(() => {
-    const count = 1200;
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const i3 = i * 3;
-      arr[i3 + 0] = (Math.random() - 0.5) * 18; // x
-      arr[i3 + 1] = (Math.random() - 0.5) * 10; // y
-      arr[i3 + 2] = (Math.random() - 0.5) * 18; // z
-    }
-    return arr;
-  }, []);
 
   useFrame((state) => {
     if (!ref.current) return;
@@ -41,7 +43,7 @@ function FoggyBackground() {
       <directionalLight position={[3, 2, 2]} intensity={0.5} />
 
       {/* Partículas */}
-      <Points ref={ref} positions={positions} stride={3} frustumCulled>
+      <Points ref={ref} positions={particlePositions} stride={3} frustumCulled>
         {/* color lo hereda; no hace falta especificar nada */}
         <PointMaterial color='#0f172a' size={0.03} sizeAttenuation depthWrite={false} />
       </Points>

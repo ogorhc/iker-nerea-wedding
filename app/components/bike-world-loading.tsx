@@ -68,12 +68,12 @@ export function Bike() {
     <group ref={group} position={[0, 1, 4]}>
       {/* Frame */}
       <mesh position={[0.3, 0.2, 0]} castShadow>
-        <boxGeometry args={[1, 0.1, 0.1]} />
+        <boxGeometry args={[1, 0.05, 0.1]} />
         <meshStandardMaterial color={Colors.white} roughness={0} />
       </mesh>
       {/* “Horquilla” */}
       <mesh position={[0.8, 0.12, 0]} rotation={[0, 0, 0]} castShadow>
-        <boxGeometry args={[0.08, 0.7, 0.1]} />
+        <boxGeometry args={[0.05, 0.7, 0.1]} />
         <meshStandardMaterial color={Colors.white} roughness={0.7} />
       </mesh>
       <mesh position={[0.3, -0, 0]} rotation={[0, 0, -1.1]} castShadow>
