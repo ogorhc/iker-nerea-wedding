@@ -2,6 +2,8 @@ import { generatePageMetadata } from '@/app/shared/utils/metadata';
 import { ServerPageContent } from '@/app/shared/components/ServerPageContent';
 import { LocaleParams } from '@/app/shared/types';
 
+export const runtime = 'edge';
+
 const NAMESPACE = 'rsvp';
 
 export async function generateMetadata({ params }: LocaleParams) {

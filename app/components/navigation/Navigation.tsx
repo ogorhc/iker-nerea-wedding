@@ -14,8 +14,7 @@ const NAVIGATION_ITEMS = [
 ] as const;
 
 const NAV_STYLES = {
-  container:
-    'fixed top-0 left-0 right-0 z-50 bg-nav-background backdrop-blur-sm border-b border-nav-border flex justify-between items-center',
+  container: 'fixed top-0 left-0 right-0 z-50 bg-nav-background backdrop-blur-sm  flex justify-between items-center',
   navList: 'mx-auto max-w-4xl px-6 py-4',
   linkBase: 'transition-colors duration-200 font-primary',
   linkActive: 'text-nav-text-active font-semibold',

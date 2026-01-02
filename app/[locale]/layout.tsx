@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation';
 import { locales } from '@/i18n';
 import { Navigation } from '../components/navigation/Navigation';
 import '../globals.css';
-import Image from 'next/image';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,9 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+export const runtime = 'edge';
+
+// Note: generateStaticParams is not compatible with edge runtime
+// Routes will be dynamically rendered, which is fine for Cloudflare Pages
 
 export async function generateMetadata() {
   return {
