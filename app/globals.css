@@ -1,26 +1,79 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary colors */
+  --background: #97a87a;
+  --foreground: #1a1a1a;
+
+  /* Secondary colors */
+  --secondary: #6b7280;
+  --secondary-foreground: #ffffff;
+
+  /* Accent colors */
+  --accent: #6366f1;
+  --accent-foreground: #ffffff;
+
+  /* Navigation colors */
+  --nav-background: #97a87a;
+  --nav-border: #1e293b;
+  --nav-text-active: #e2e8f0;
+  --nav-text-inactive: #e2e8f0;
+  --nav-text-hover: #e2e8f0;
+
+  /* Page content colors */
+  --page-background: #e2e8f0;
+  --page-text: #f1f5f9;
+  --page-text-primary: #97a87a;
+  --page-text-secondary: rgba(15, 23, 42, 0.5);
+
+  /* Font families */
+  --font-primary: var(--font-geist-sans);
+  --font-secondary: var(--font-geist-mono);
 }
 
-@theme inline {
+@theme {
+  /* Primary colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Secondary colors */
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  /* Accent colors */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* Navigation colors */
+  --color-nav-background: var(--nav-background);
+  --color-nav-border: var(--nav-border);
+  --color-nav-text-active: var(--nav-text-active);
+  --color-nav-text-inactive: var(--nav-text-inactive);
+  --color-nav-text-hover: var(--nav-text-hover);
+
+  /* Page content colors */
+  --color-page-background: var(--page-background);
+  --color-page-text: var(--page-text);
+  --color-page-text-primary: var(--page-text-primary);
+  --color-page-text-secondary: var(--page-text-secondary);
+
+  /* Font families */
+  --font-family-primary: var(--font-primary);
+  --font-family-secondary: var(--font-secondary);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #97a87a;
     --foreground: #ededed;
+    --secondary: #fcf9ea;
+    --page-background: #fcf9ea;
+    --page-text-primary: #97a87a;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-primary), Arial, Helvetica, sans-serif;
 }

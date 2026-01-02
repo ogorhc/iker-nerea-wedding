@@ -1,0 +1,21 @@
+{
+  "navigation": {
+    "home": "Hasiera",
+    "media": "Multimedia",
+    "rsvp": "Asistentzia berretsi"
+  },
+  "home": {
+    "title": "Hasierako orria",
+    "subtitle": "Gurekin laster..."
+  },
+  "media": {
+    "title": "Multimedia",
+    "subtitle": "Multimedia galeria laster...",
+    "description": "Ezkontzako multimedia galeria"
+  },
+  "rsvp": {
+    "title": "Asistentzia berretsi",
+    "subtitle": "Berrespen formularioa laster...",
+    "description": "Berretsi zure asistentzia ezkontzara"
+  }
+}

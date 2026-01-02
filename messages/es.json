@@ -1,0 +1,21 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "media": "Medios",
+    "rsvp": "Confirmar asistencia"
+  },
+  "home": {
+    "title": "Página de inicio",
+    "subtitle": "Estamos trabajando en ello..."
+  },
+  "media": {
+    "title": "Medios",
+    "subtitle": "Galería de medios próximamente...",
+    "description": "Galería de medios de la boda"
+  },
+  "rsvp": {
+    "title": "Confirmar asistencia",
+    "subtitle": "Formulario de confirmación próximamente...",
+    "description": "Confirma tu asistencia a la boda"
+  }
+}
