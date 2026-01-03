@@ -1,0 +1,28 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PageContent } from '../../components/react/PageContent';
+import { getTranslation } from '../../i18n/translations';
+import { locales, defaultLocale } from '../../i18n/config';
+import type { Locale } from '../../i18n/config';
+
+export async function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const { locale } = Astro.params;
+
+if (!locale || !locales.includes(locale as Locale)) {
+  return Astro.redirect(`/${defaultLocale}`, 302);
+}
+
+const currentLocale = locale as Locale;
+const title = getTranslation(currentLocale, 'home.title');
+const subtitle = getTranslation(currentLocale, 'home.subtitle');
+---
+
+<Layout locale={currentLocale} title={title} description={subtitle}>
+  <PageContent client:load title={title} subtitle={subtitle} />
+</Layout>
+

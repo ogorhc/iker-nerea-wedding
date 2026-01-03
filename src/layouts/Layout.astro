@@ -1,0 +1,40 @@
+---
+import { Navigation } from '../components/react/Navigation';
+import { getTranslation } from '../i18n/translations';
+import type { Locale } from '../i18n/config';
+import '../styles/globals.css';
+
+interface Props {
+  locale: Locale;
+  title?: string;
+  description?: string;
+}
+
+const { locale, title, description } = Astro.props;
+const pageTitle = title || getTranslation(locale, 'home.title');
+const pageDescription = description || getTranslation(locale, 'home.subtitle');
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={pageDescription} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Imperial+Script&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>{pageTitle} - Iker Eta Nerea Wedding</title>
+  </head>
+  <body class="relative antialiased">
+    <Navigation client:load locale={locale} currentPath={currentPath} />
+    <slot />
+  </body>
+</html>
+
