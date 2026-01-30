@@ -1,6 +1,7 @@
 import { locales } from '../../i18n/config';
 import { buildLocalePath, getPathWithoutLocale } from '../../utils/routing';
 import type { Locale } from '../../i18n/config';
+import { cn } from '@/utils/cn';
 
 const BUTTON_STYLES = {
   base: 'transition-colors duration-200 font-primary',
@@ -20,12 +21,13 @@ export function LanguageSwitch({ currentLocale, currentPath }: LanguageSwitchPro
     <div className='flex items-center gap-2 text-2xl'>
       {locales.map((locale) => {
         const isActive = currentLocale === locale;
+        console.log('locale', isActive);
         const newPath = buildLocalePath(locale, pathnameWithoutLocale);
         return (
           <a
             key={locale}
             href={newPath}
-            className={`${BUTTON_STYLES.base} ${isActive ? BUTTON_STYLES.active : BUTTON_STYLES.inactive}`}
+            className={cn(BUTTON_STYLES.base, isActive ? BUTTON_STYLES.inactive : BUTTON_STYLES.active)}
           >
             {locale.toUpperCase()}
           </a>

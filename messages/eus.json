@@ -2,7 +2,7 @@
   "navigation": {
     "home": "Hasiera",
     "media": "Multimedia",
-    "rsvp": "Asistentzia berretsi"
+    "rsvp": "Asistentzia"
   },
   "home": {
     "title": "Hasierako orria",
@@ -14,7 +14,7 @@
     "description": "Ezkontzako multimedia galeria"
   },
   "rsvp": {
-    "title": "Asistentzia berretsi",
+    "title": "Asistentzia",
     "subtitle": "Berrespen formularioa laster...",
     "description": "Berretsi zure asistentzia ezkontzara"
   }

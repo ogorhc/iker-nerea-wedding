@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useUIStore } from '@/stores/uiStore';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -58,12 +59,22 @@ export const ParallaxStack = ({ pinDuration = 5000 }: ParallaxStackProps) => {
     // Setter rápido para no re-renderizar React en cada tick
     const setBgStop = gsap.quickSetter(container, '--bgStop', '%') as (v: number) => void;
 
-    // “hack” simple para esperar a que imágenes tengan dimensiones y ScrollTrigger calcule bien
+    // Esperar a que todas las imágenes tengan dimensiones; luego ScrollTrigger.refresh y store (loader)
     const imgs = layerRefs.current.filter(Boolean) as HTMLImageElement[];
-    const refreshOnLoad = () => ScrollTrigger.refresh();
+    const setParallaxLoaded = useUIStore.getState().setParallaxLoaded;
+    let loadedCount = imgs.filter((img) => img.complete).length;
+
+    const refreshOnLoad = () => {
+      ScrollTrigger.refresh();
+      loadedCount += 1;
+      if (loadedCount >= imgs.length) setParallaxLoaded(true);
+    };
+
     imgs.forEach((img) => {
       if (!img.complete) img.addEventListener('load', refreshOnLoad, { once: true });
     });
+
+    if (imgs.length === 0 || loadedCount >= imgs.length) setParallaxLoaded(true);
 
     const ctx = gsap.context(() => {
       // Limpieza por si hay hot reload / rehidratación
@@ -191,11 +202,12 @@ export const ParallaxStack = ({ pinDuration = 5000 }: ParallaxStackProps) => {
         <h1
           ref={textRef}
           className="
-            text-nav-text-inactive
+            text-nav-background
             font-title
             flex items-center justify-center
             text-6xl lg:text-9xl
             gap-6
+            my-18
           "
           style={{
             // Entre cielo y montaña (manteniendo tu intención)

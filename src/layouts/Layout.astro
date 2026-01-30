@@ -4,6 +4,7 @@ import { getTranslation } from '../i18n/translations';
 import type { Locale } from '../i18n/config';
 import '../styles/globals.css';
 import { HamburgerButton } from '@/components/react/components/HamburgerButton';
+import { PageLoader } from '@/components/react/PageLoader';
 
 interface Props {
   locale: Locale;
@@ -33,8 +34,11 @@ const currentPath = Astro.url.pathname;
 
     <title>{pageTitle} - Iker Eta Nerea</title>
   </head>
-  <body class="relative antialiased">
-    <HamburgerButton client:load />
+  <body class="antialiased">
+    <PageLoader client:load />
+    <div class="sticky top-10 right-6 w-full z-51 flex justify-end">
+      <HamburgerButton client:load />
+    </div>
     <Navigation client:load locale={locale} currentPath={currentPath} />
     <main>
       <slot />

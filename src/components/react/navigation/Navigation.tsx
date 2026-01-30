@@ -17,12 +17,16 @@ const NAVIGATION_ITEMS = [
 ] as const;
 
 const NAV_STYLES = {
-  container: 'fixed top-0 left-0 right-0 z-40 bg-nav-background p-6 h-screen w-screen overflow-hidden',
-  navList: 'h-screen flex flex-col items-center justify-center relative z-10',
-  linkBase: 'font-primary text-6xl uppercase relative inline-block',
+  container:
+    'fixed inset-0 z-40 bg-nav-background px-6 sm:px-10 py-8 h-[100dvh] w-screen overflow-y-auto overscroll-contain',
+  navList:
+    'min-h-[100dvh] flex flex-col justify-center items-start lg:items-center',
+  linkBase:
+    'font-primary uppercase relative inline-block leading-none',
   linkActive: 'text-nav-text-active font-semibold',
   linkInactive: 'text-outline',
 } as const;
+
 
 // Animation variants respecting reduced motion
 const getContainerVariants = (shouldReduceMotion: boolean) => ({
@@ -101,11 +105,11 @@ function NavigationLink({
   const itemVariants = getItemVariants(shouldReduceMotion);
 
   return (
-    <motion.li variants={itemVariants} className='relative'>
+    <motion.li variants={itemVariants}>
       <motion.a
         href={href}
         onClick={closeNavigation}
-        className={`${NAV_STYLES.linkBase} ${NAV_STYLES.linkInactive} inline-flex items-center gap-6 min-w-0`}
+        className={`${NAV_STYLES.linkBase} ${NAV_STYLES.linkInactive} inline-flex items-center gap-4 sm:gap-6 min-w-0 text-5xl sm:text-6xl`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onFocus={() => setIsHovered(true)}
@@ -121,7 +125,7 @@ function NavigationLink({
         <span className='whitespace-nowrap text-outline'>{children}</span>
 
         <ChevronRight
-          className='text-nav-text-hover shrink-0 w-12 h-12 '
+          className="text-nav-text-hover shrink-0 w-8 h-8 sm:w-12 sm:h-12"
           animate={{
             opacity: isHovered ? 1 : 0,
             x: isHovered && !shouldReduceMotion ? 0 : -50,
@@ -182,7 +186,7 @@ export function Navigation({ locale, currentPath }: INavigationProps) {
         >
           <div className={NAV_STYLES.navList}>
             <motion.ul
-              className='flex flex-col items-start justify-start gap-8 font-extrabold'
+              className="flex flex-col items-start gap-6 sm:gap-8 font-extrabold w-full max-w-xl "
               variants={listVariants}
               initial='initial'
               animate='animate'

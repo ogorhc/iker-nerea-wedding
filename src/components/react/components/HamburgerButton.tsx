@@ -1,4 +1,5 @@
 import { useUIStore } from '@/stores/uiStore';
+import { cn } from '@/utils/cn';
 import { motion } from 'framer-motion';
 
 export const HamburgerButton = () => {
@@ -7,7 +8,7 @@ export const HamburgerButton = () => {
   return (
     <button
       onClick={toggleNavigation}
-      className='absolute top-6 right-6 transition-colors duration-200 text-nav-text-inactive hover:text-nav-text-hover cursor-pointer z-51'
+      className={cn('transition-colors duration-200 cursor-pointer z-51 mx-4', isNavigationOpen ? 'text-nav-foreground' : 'text-nav-background')}
       aria-label={isNavigationOpen ? 'Close navigation' : 'Open navigation'}
     >
       <motion.div
