@@ -2,7 +2,7 @@
   "navigation": {
     "home": "Inicio",
     "media": "Medios",
-    "rsvp": "Confirmar asistencia"
+    "rsvp": "Asistencia"
   },
   "home": {
     "title": "Página de inicio",
@@ -14,7 +14,7 @@
     "description": "Galería de medios de la boda"
   },
   "rsvp": {
-    "title": "Confirmar asistencia",
+    "title": "Asistencia",
     "subtitle": "Formulario de confirmación próximamente...",
     "description": "Confirma tu asistencia a la boda"
   }

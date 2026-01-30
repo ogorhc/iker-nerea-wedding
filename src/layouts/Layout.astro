@@ -1,8 +1,9 @@
 ---
-import { Navigation } from '../components/react/Navigation';
+import { Navigation } from '../components/react/navigation/Navigation';
 import { getTranslation } from '../i18n/translations';
 import type { Locale } from '../i18n/config';
 import '../styles/globals.css';
+import { HamburgerButton } from '@/components/react/components/HamburgerButton';
 
 interface Props {
   locale: Locale;
@@ -30,11 +31,14 @@ const currentPath = Astro.url.pathname;
       rel="stylesheet"
     />
 
-    <title>{pageTitle} - Iker Eta Nerea Wedding</title>
+    <title>{pageTitle} - Iker Eta Nerea</title>
   </head>
   <body class="relative antialiased">
+    <HamburgerButton client:load />
     <Navigation client:load locale={locale} currentPath={currentPath} />
-    <slot />
+    <main>
+      <slot />
+    </main>
   </body>
 </html>
 

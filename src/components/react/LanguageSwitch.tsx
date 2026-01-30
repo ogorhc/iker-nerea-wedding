@@ -17,7 +17,7 @@ export function LanguageSwitch({ currentLocale, currentPath }: LanguageSwitchPro
   const pathnameWithoutLocale = getPathWithoutLocale(currentPath, currentLocale);
 
   return (
-    <div className='flex items-center gap-2 px-6'>
+    <div className='flex items-center gap-2 text-2xl'>
       {locales.map((locale) => {
         const isActive = currentLocale === locale;
         const newPath = buildLocalePath(locale, pathnameWithoutLocale);
@@ -34,4 +34,3 @@ export function LanguageSwitch({ currentLocale, currentPath }: LanguageSwitchPro
     </div>
   );
 }
-
