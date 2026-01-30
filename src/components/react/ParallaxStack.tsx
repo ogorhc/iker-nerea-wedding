@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Register ScrollTrigger plugin
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
+  // Reduce “saltos” al cambiar el viewport en móvil (barra del navegador, etc.)
+  ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 export interface ParallaxLayer {
@@ -13,183 +14,153 @@ export interface ParallaxLayer {
   alt: string;
   zIndex?: number;
   movementAmount?: number;
+  objectPosition?: string; // opcional para controlar el encuadre por capa en móvil
 }
 
 const layers: ParallaxLayer[] = [
-  {
-    id: 'front',
-    src: '/parallax/front.webp',
-    alt: 'Front',
-    zIndex: 1,
-    movementAmount: 80,
-  },
-  {
-    id: 'birds',
-    src: '/parallax/birds.webp',
-    alt: 'Birds',
-    zIndex: 2,
-    movementAmount: 580,
-  },
-  {
-    id: 'water',
-    src: '/parallax/water.webp',
-    alt: 'Water',
-    zIndex: 3,
-    movementAmount: 280,
-  },
-  {
-    id: 'camp',
-    src: '/parallax/camp.webp',
-    alt: 'Camp',
-    zIndex: 4,
-    movementAmount: 280,
-  },
-  {
-    id: 'mountain',
-    src: '/parallax/montain.webp',
-    alt: 'Mountain',
-    zIndex: 5,
-    movementAmount: 380,
-  },
-  {
-    id: 'sun',
-    src: '/parallax/sun.webp',
-    alt: 'Sun',
-    zIndex: 6,
-    movementAmount: 780,
-  },
-  {
-    id: 'stars',
-    src: '/parallax/stars.webp',
-    alt: 'Stars',
-    zIndex: 7,
-    movementAmount: 0, // Stars stay in place or move very little
-  },
+  { id: 'front', src: '/parallax/front.webp', alt: 'Front', zIndex: 1, movementAmount: 50, objectPosition: 'center bottom' },
+  { id: 'birds', src: '/parallax/birds.webp', alt: 'Birds', zIndex: 2, movementAmount: 350, objectPosition: 'center center' },
+  { id: 'water', src: '/parallax/water.webp', alt: 'Water', zIndex: 3, movementAmount: 200, objectPosition: 'center bottom' },
+  { id: 'camp', src: '/parallax/camp.webp', alt: 'Camp', zIndex: 4, movementAmount: 200, objectPosition: 'center bottom' },
+  { id: 'mountain', src: '/parallax/mountain.webp', alt: 'Mountain', zIndex: 5, movementAmount: 250, objectPosition: 'center bottom' },
+  { id: 'sun', src: '/parallax/sun.webp', alt: 'Sun', zIndex: 6, movementAmount: 350, objectPosition: 'center 50%', },
+  { id: 'clouds', src: '/parallax/clouds.webp', alt: 'Clouds', zIndex: 7, movementAmount: 0, objectPosition: 'center top' },
+  { id: 'stars', src: '/parallax/stars.webp', alt: 'Stars', zIndex: 7, movementAmount: 0, objectPosition: 'center top' },
 ];
 
 interface ParallaxStackProps {
-  pinDuration?: number; // Duration in pixels for pinning
+  pinDuration?: number; // px de scroll fijado
 }
 
-export const ParallaxStack = ({
-  pinDuration = 5000, // Default: 5000px of scroll (like in example)
-}: ParallaxStackProps) => {
+export const ParallaxStack = ({ pinDuration = 5000 }: ParallaxStackProps) => {
+  const [background, setBackground] = useState<number>(50);
   const parallaxRef = useRef<HTMLElement>(null);
   const layerRefs = useRef<(HTMLImageElement | null)[]>([]);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
-  const [background, setBackground] = useState(20);
+
+  const { maxZ, cssZById } = useMemo(() => {
+    const zValues = layers.map((l, i) => l.zIndex ?? i + 1);
+    const maxZ = Math.max(...zValues);
+    const cssZById = new Map<string, number>();
+    layers.forEach((l, i) => {
+      const z = l.zIndex ?? i + 1;
+      // invertimos: zIndex 1 (frente) = css z-index más alto
+      cssZById.set(l.id, maxZ - z + 1);
+    });
+    return { maxZ, cssZById };
+  }, []);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
-      gsap.registerPlugin(ScrollTrigger);
+    const container = parallaxRef.current;
+    if (!container) return;
 
-      const container = parallaxRef.current;
-      if (!container) return;
+    // Setter rápido para no re-renderizar React en cada tick
+    const setBgStop = gsap.quickSetter(container, '--bgStop', '%') as (v: number) => void;
 
-      // Create timeline for the entire parallax sequence
+    // “hack” simple para esperar a que imágenes tengan dimensiones y ScrollTrigger calcule bien
+    const imgs = layerRefs.current.filter(Boolean) as HTMLImageElement[];
+    const refreshOnLoad = () => ScrollTrigger.refresh();
+    imgs.forEach((img) => {
+      if (!img.complete) img.addEventListener('load', refreshOnLoad, { once: true });
+    });
+
+    const ctx = gsap.context(() => {
+      // Limpieza por si hay hot reload / rehidratación
+      ScrollTrigger.getAll().forEach((t) => {
+        // Evita matar triggers ajenos si reutilizas GSAP en la página:
+        // solo mataremos los que cuelgan del contenedor mediante contexto, así que no es necesario aquí.
+      });
+
+      // Usa timeline con ScrollTrigger “amable” en móvil
       const tl = gsap.timeline({
-        defaults: { duration: 1 },
+        defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: container,
           start: 'top top',
-          end: `${pinDuration} bottom`,
-          scrub: true,
+          end: `+=${pinDuration}`, // más fiable que `${pinDuration} bottom`
+          scrub: 0.6, // numérico suele ir más suave en móvil que true
           pin: true,
-        },
-        onUpdate: (self) => {
-          setBackground(Math.ceil(self.progress * 100 + 20));
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          onUpdate: (self) => {
+            // 20%..120% aprox (tu lógica original)
+            const v = Math.ceil(self.progress * 100 + 20);
+            setBgStop(v);
+            setBackground(Math.ceil(self.progress * 100 + 5))
+          },
         },
       });
-      // Animate all layers - front layer (first) moves up, others move down
-      layerRefs.current.forEach((layer, index) => {
-        if (!layer) return;
 
+      // Asegurar que todo anima con transform (GPU friendly)
+      gsap.set(
+        [backgroundRef.current, textRef.current, ...layerRefs.current.filter(Boolean)],
+        { willChange: 'transform', force3D: true },
+      );
+
+      layerRefs.current.forEach((layerEl, index) => {
+        if (!layerEl) return;
         const layerData = layers[index];
-        const movementAmount = layerData.movementAmount;
+        const movementAmount = layerData.movementAmount ?? 0;
         const isStars = layerData.id === 'stars';
-        const layerZIndex = layers[index].zIndex ?? index + 1;
-        const maxZIndex = Math.max(...layers.map((l, i) => l.zIndex ?? i + 1));
-        const isFrontLayer = index === 0 || layerZIndex === 1; // First layer or zIndex 1
+        const isFrontLayer = index === 0 || layerData.zIndex === 1;
 
         if (isStars) {
-          // Stars layer - moves down slowly to reveal
-          tl.to(
-            layer,
-            {
-              y: `+=${550}`, // Move down from -550px to visible
-            },
-            0, // Start at the beginning
-          );
-        } else if (isFrontLayer) {
-          // Front layer moves up
-          if (movementAmount) {
-            tl.to(
-              layer,
-              {
-                y: `-=${movementAmount}`,
-              },
-              0,
-            );
-          }
+          // estrellas: bajan para “entrar”
+          tl.to(layerEl, { y: `+=550` }, 0);
+          return;
+        }
+
+        if (!movementAmount) return;
+
+        if (isFrontLayer) {
+          tl.to(layerEl, { y: `-=${movementAmount}` }, 0);
         } else {
-          // Other layers move down
-          if (movementAmount) {
-            tl.to(
-              layer,
-              {
-                y: `+=${movementAmount}`,
-              },
-              0,
-            );
-          }
+          tl.to(layerEl, { y: `+=${movementAmount}` }, 0);
         }
       });
 
-      // Animate background color layer - moves up with first layer
       if (backgroundRef.current) {
-        tl.to(
-          backgroundRef.current,
-          {
-            y: `-=${80}`, // Move up with first layer
-          },
-          0,
-        );
+        tl.to(backgroundRef.current, { y: `-=80` }, 0);
       }
 
-      // Animate text layer - moves down with other layers
       if (textRef.current) {
-        tl.to(
-          textRef.current,
-          {
-            y: `+=${980}`, // Move down to reveal
-          },
-          0,
-        );
+        tl.to(textRef.current, { y: `+=350` }, 0);
       }
-    });
+    }, container);
 
-    return () => ctx.revert();
-  }, [layers, pinDuration]);
+    const onResize = () => ScrollTrigger.refresh();
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+
+    // Primer refresh (por si Astro hidrata cuando ya hay layout)
+    ScrollTrigger.refresh();
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+      imgs.forEach((img) => img.removeEventListener('load', refreshOnLoad));
+      ctx.revert();
+    };
+  }, [pinDuration]);
 
   return (
-    <div className='overflow-hidden'>
+    <div className="overflow-hidden">
       <section
         ref={parallaxRef}
-        className='relative w-full'
+        className="
+          relative w-full overflow-hidden
+          min-h-svh h-[110svh]
+        "
         style={{
-          height: '110vh',
-          position: 'relative',
-          background: `linear-gradient(#a5dfe4, #a5dfe4 ${background}%, #a5dfe4, #a5dfe4 )`, // Sky gradient background
+          background: `linear-gradient(#00292b ${background}%, #d1fdff )`,
         }}
       >
         {layers.map((layer, index) => {
-          // Invert zIndex: in CSS, higher zIndex = front (visually on top)
-          // But in our data, lower zIndex = front layer, so we need to invert
-          const maxZIndex = Math.max(...layers.map((l) => l.zIndex ?? layers.length - layers.indexOf(l)));
-          const layerZIndex = layer.zIndex ?? layers.length - index;
-          const calculatedZIndex = maxZIndex - layerZIndex + 1; // Invert: front (zIndex 1) becomes highest CSS zIndex
           const isStars = layer.id === 'stars';
+          const zIndex = cssZById.get(layer.id) ?? 1;
 
           return (
             <img
@@ -199,65 +170,60 @@ export const ParallaxStack = ({
               }}
               src={layer.src}
               alt={layer.alt}
-              className='absolute w-full'
-              style={{
-                position: 'absolute',
-                ...(isStars
-                  ? {
-                      top: '-550px', // Position stars at the top like in example
-                      left: 0,
-                      bottom: 'auto',
-                    }
-                  : {
-                      bottom: 0,
-                    }),
-                zIndex: calculatedZIndex,
-                height: isStars ? 'auto' : '100%',
-                width: '100%',
-                objectFit: 'cover',
-              }}
               loading={index === 0 ? 'eager' : 'lazy'}
+              className="
+                absolute inset-0 w-full h-full
+                select-none pointer-events-none
+              "
+              style={{
+                zIndex,
+                // Importante para móvil: SIEMPRE “cover” y con posición controlada
+                objectFit: 'cover',
+                objectPosition: layer.objectPosition ?? 'center bottom',
+                // Stars: queremos que empiecen “arriba” para luego bajar
+                ...(isStars ? { transform: 'translate3d(0,-550px,0)' } : null),
+              }}
             />
           );
         })}
-        {/* Text layer - "Nerea & Iker" between sky and mountain */}
+
+        {/* Texto: ajusta tamaños en móvil y evita overflow */}
         <h1
           ref={textRef}
-          className='left-10 top-20 text-outline text-8xl flex flex-col items-start'
+          className="
+            text-nav-text-inactive
+            font-title
+            flex items-center justify-center
+            text-6xl lg:text-9xl
+            gap-6
+          "
           style={{
+            // Entre cielo y montaña (manteniendo tu intención)
             zIndex: (() => {
-              const maxZIndex = Math.max(...layers.map((l) => l.zIndex ?? layers.length - layers.indexOf(l)));
               const mountainZIndex = layers.find((l) => l.id === 'mountain')?.zIndex ?? 5;
-              // Position text between sky (background) and mountain
-              // Mountain has zIndex 5, so text should be slightly behind it
-              return maxZIndex - mountainZIndex;
+              return maxZ - mountainZIndex;
             })(),
-            position: 'absolute',
-            whiteSpace: 'pre-line',
           }}
         >
           <span>Nerea</span>
-          <span className='text-6xl'>&</span>
+          <span className="text-4xl sm:text-6xl">&</span>
           <span>Iker</span>
         </h1>
-        {/* Background color layer for first layer - moves with it */}
-        {layers.length > 0 && (
-          <div
-            ref={backgroundRef}
-            className='absolute w-full'
-            style={{
-              backgroundColor: '#6b7716',
-              zIndex: (() => {
-                const maxZIndex = Math.max(...layers.map((l) => l.zIndex ?? layers.length - layers.indexOf(l)));
-                const firstLayerZIndex = layers[0].zIndex ?? layers.length;
-                return maxZIndex - firstLayerZIndex + 1; // Invert to match CSS zIndex
-              })(),
-              top: '100%',
-              height: '200vh',
-              position: 'absolute',
-            }}
-          />
-        )}
+
+        {/* Capa de color del suelo */}
+        <div
+          ref={backgroundRef}
+          className="absolute left-0 w-full"
+          style={{
+            backgroundColor: '#e1eacd',
+            zIndex: (() => {
+              const firstLayerZIndex = layers[0].zIndex ?? 1;
+              return maxZ - firstLayerZIndex + 1;
+            })(),
+            top: '100%',
+            height: '200vh',
+          }}
+        />
       </section>
     </div>
   );

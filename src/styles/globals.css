@@ -18,9 +18,9 @@
   /* Navigation colors */
   --nav-background: #97a87a;
   --nav-border: #1e293b;
-  --nav-text-active: #e2e8f0;
-  --nav-text-inactive: #e2e8f0;
-  --nav-text-hover: #e2e8f0;
+  --nav-text-active: #fffedf;
+  --nav-text-inactive: #fffedf;
+  --nav-text-hover: #fffedf;
 
   /* Page content colors */
   --page-background: #e2e8f0;
