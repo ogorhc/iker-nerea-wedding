@@ -125,3 +125,23 @@ h1.text-outline {
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (max-width: 768px) {
+  img[data-pos-mobile] {
+    object-position: attr(data-pos-mobile);
+  }
+}
+@keyframes scrollDot {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.animate-scroll-dot {
+  animation: scrollDot 1s ease-in-out infinite;
+}
