@@ -36,7 +36,7 @@ const currentPath = Astro.url.pathname;
   </head>
   <body class="antialiased">
     <PageLoader client:load />
-    <div class="sticky top-10 right-6 w-full z-51 flex justify-end">
+    <div class="fixed top-6 right-6 z-51 flex justify-end pointer-events-none [&>*]:pointer-events-auto">
       <HamburgerButton client:load />
     </div>
     <Navigation client:load locale={locale} currentPath={currentPath} />

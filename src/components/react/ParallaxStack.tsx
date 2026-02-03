@@ -210,18 +210,17 @@ export const ParallaxStack = ({ pinDuration = 3500 }: ParallaxStackProps) => {
             if (!el) return;
             const layer = layers[i];
             const isStars = layer.id === 'stars';
+            const isBirds = layer.id === 'birds';
             const isFront = layer.zIndex === 1;
-
-            // if (isStars) {
-            //   // desde -550 hasta 0
-            //   tl.to(el, { y: 0 }, 0);
-            //   return;
-            // }
 
             const movement = isMobile ? (layer.movementMobile ?? layer.movementDesktop) : layer.movementDesktop;
             if (!movement) return;
 
-            tl.to(el, { y: isFront ? `-=${movement}` : `+=${movement}` }, 0);
+            if (isBirds) {
+              tl.to(el, { x: `-=${movement}`, y: `-=${movement / 2}` }, 0);
+            } else {
+              tl.to(el, { y: isFront ? `-=${movement}` : `+=${movement}` }, 0);
+            }
           });
 
           if (backgroundRef.current) tl.to(backgroundRef.current, { y: `-=80` }, 0);
@@ -253,7 +252,7 @@ export const ParallaxStack = ({ pinDuration = 3500 }: ParallaxStackProps) => {
     <div className="overflow-hidden">
       <section
         ref={parallaxRef}
-        className="relative w-full overflow-hidden min-h-[100dvh] h-[110dvh]"
+        className="relative w-full overflow-hidden h-[100dvh]"
         style={{
           ['--bgStop' as any]: 50,
           background: 'linear-gradient(#00292b var(--bgStop), #d1fdff)',

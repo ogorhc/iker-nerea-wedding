@@ -70,7 +70,7 @@ export function ParallaxScrollIndicator({
     <div
       aria-hidden="true"
       className={[
-        "pointer-events-none absolute left-8 bottom-28 -translate-x-1/2 z-[9999] lg:left-16 lg:bottom-40",
+        "pointer-events-none absolute left-8 bottom-28 -translate-x-1/2 z-[9999] lg:left-18 lg:bottom-20",
         "transition-opacity duration-300",
         visible ? "opacity-100" : "opacity-0",
         className,
