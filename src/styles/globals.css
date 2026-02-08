@@ -175,11 +175,10 @@ h1,
 }
 
 span.text-outline,
-h1.text-outline {
+h1.text-outline,
+a.text-outline {
   -webkit-text-stroke: 2px var(--nav-text-inactive);
-
   color: transparent;
-
   font-family: 'Arial', sans-serif;
   text-align: center;
 }

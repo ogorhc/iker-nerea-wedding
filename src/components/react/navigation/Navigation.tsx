@@ -6,7 +6,7 @@ import type { INavigationProps } from './types/INavigationProps';
 import { LanguageSwitch } from '../LanguageSwitch';
 import { useUIStore } from '@/stores/uiStore';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { ChevronRight } from '../components/ChevronRight';
+import { NavigationLink, getItemVariants } from './NavigationLink';
 
 const transitionSpeed = 0.15;
 
@@ -21,10 +21,6 @@ const NAV_STYLES = {
     'fixed inset-0 z-40 bg-nav-background px-6 sm:px-10 py-8 h-[100dvh] w-screen overflow-y-auto overscroll-contain',
   navList:
     'min-h-[100dvh] flex flex-col justify-center items-start lg:items-center',
-  linkBase:
-    'font-primary uppercase relative inline-block leading-none',
-  linkActive: 'text-nav-text-active font-semibold',
-  linkInactive: 'text-outline',
 } as const;
 
 
@@ -65,86 +61,10 @@ const getListVariants = (shouldReduceMotion: boolean) => ({
   },
 });
 
-const getItemVariants = (shouldReduceMotion: boolean) => ({
-  initial: {
-    opacity: 0,
-    y: shouldReduceMotion ? 0 : 8,
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: shouldReduceMotion ? 0 : 0.4,
-      ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: shouldReduceMotion ? 0 : 8,
-    transition: {
-      duration: shouldReduceMotion ? 0 : transitionSpeed,
-      ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
-    },
-  },
-});
-
-function NavigationLink({
-  href,
-  isActive,
-  children,
-  shouldReduceMotion,
-}: {
-  href: string;
-  isActive: boolean;
-  children: React.ReactNode;
-  shouldReduceMotion: boolean;
-}) {
-  const { closeNavigation } = useUIStore();
-  const [isHovered, setIsHovered] = useState(false);
-
-  const itemVariants = getItemVariants(shouldReduceMotion);
-
-  return (
-    <motion.li variants={itemVariants}>
-      <motion.a
-        href={href}
-        onClick={closeNavigation}
-        className={`${NAV_STYLES.linkBase} ${NAV_STYLES.linkInactive} inline-flex items-center gap-4 sm:gap-6 min-w-0 text-5xl sm:text-6xl`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onFocus={() => setIsHovered(true)}
-        onBlur={() => setIsHovered(false)}
-        animate={{
-          x: isHovered && !shouldReduceMotion ? -16 : 0,
-        }}
-        transition={{
-          duration: shouldReduceMotion ? 0 : transitionSpeed,
-          ease: [0.25, 0.46, 0.45, 0.94],
-        }}
-      >
-        <span className='whitespace-nowrap'>{children}</span>
-
-        <ChevronRight
-          className="text-nav-text-hover shrink-0 w-8 h-8 sm:w-12 sm:h-12"
-          animate={{
-            opacity: isHovered ? 1 : 0,
-            x: isHovered && !shouldReduceMotion ? 0 : -50,
-            // scale: isHovered && !shouldReduceMotion ? 1 : 0.8,
-          }}
-          transition={{
-            duration: shouldReduceMotion ? 0 : transitionSpeed,
-            ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
-          }}
-        />
-      </motion.a>
-    </motion.li>
-  );
-}
-
 export function Navigation({ locale, currentPath }: INavigationProps) {
   const [pathname, setPathname] = useState(currentPath);
   const { t } = useTranslation(locale);
-  const { isNavigationOpen } = useUIStore();
+  const { isNavigationOpen, closeNavigation } = useUIStore();
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -204,6 +124,7 @@ export function Navigation({ locale, currentPath }: INavigationProps) {
                     key={item.route}
                     href={href}
                     isActive={isActive}
+                    onClick={closeNavigation}
                     shouldReduceMotion={shouldReduceMotion ?? false}
                   >
                     {t(`navigation.${item.key}`)}

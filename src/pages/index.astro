@@ -1,5 +1,19 @@
 ---
-import { defaultLocale } from '../i18n/config';
-return Astro.redirect(`/${defaultLocale}`, 302);
+import LanguageSelectorLayout from '../layouts/LanguageSelectorLayout.astro';
+import { LanguageSelectLinks } from '../components/react/navigation/LanguageSelectLinks';
 ---
 
+<LanguageSelectorLayout>
+  <section
+    class="min-h-screen px-6 sm:px-10 py-8 flex flex-col justify-center items-start lg:items-center overflow-y-auto overscroll-contain"
+    aria-label="Selecciona idioma"
+  >
+    <h1 class="sr-only">Selecciona idioma</h1>
+    <ul
+      class="flex flex-col items-start gap-6 sm:gap-8 font-extrabold w-full max-w-xl list-none p-0 m-0"
+      role="list"
+    >
+      <LanguageSelectLinks client:load />
+    </ul>
+  </section>
+</LanguageSelectorLayout>
