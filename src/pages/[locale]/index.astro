@@ -4,6 +4,8 @@ import { getTranslation } from '../../i18n/translations';
 import { locales, defaultLocale } from '../../i18n/config';
 import type { Locale } from '../../i18n/config';
 import { Parallax } from '@/components/react/Parallax';
+import { PhraseReveal } from '@/components/react/PhraseReveal';
+import { HeroMarqueeWeGetMarried } from '@/components/react/HeroMarqueeWeGetMarried';
 
 export async function getStaticPaths() {
   return locales.map((locale) => ({
@@ -24,6 +26,8 @@ const subtitle = getTranslation(currentLocale, 'home.subtitle');
 
 <Layout locale={currentLocale} title={title} description={subtitle}>
   <Parallax client:load />
+  <PhraseReveal client:load locale={currentLocale} />
+  <HeroMarqueeWeGetMarried client:load />
   <div class="h-screen w-full text-center text-4xl font-bold flex items-center justify-center bg-nav-background text-nav-text-inactive">
     NEREA ETA IKER
   </div>

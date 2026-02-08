@@ -145,3 +145,16 @@ h1.text-outline {
 .animate-scroll-dot {
   animation: scrollDot 1s ease-in-out infinite;
 }
+
+@keyframes hero-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-hero-marquee {
+  animation: hero-marquee 18s linear infinite;
+}
