@@ -178,36 +178,19 @@ span.text-outline,
 h1.text-outline {
   -webkit-text-stroke: 2px var(--nav-text-inactive);
 
-  /* Mejor que color: transparent en Android Chrome */
-  -webkit-text-fill-color: transparent;
   color: transparent;
 
-  /* Ayuda a que stroke/fill se compongan mejor */
-  paint-order: stroke fill;
-
-  /* Reduce "tiles" / cortes en algunos devices */
-  -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
-
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
   text-align: center;
 }
 
-/* Si estás usando spans por letra, esto ayuda bastante */
-span.text-outline {
-  /* Evita artefactos por capas/tiles */
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* Hover */
 .text-outline:hover,
 .text-outline:focus-visible {
   -webkit-text-stroke: 0.5px var(--nav-text-hover);
   -webkit-text-fill-color: var(--nav-text-hover);
   color: var(--nav-text-hover);
+  /* paint-order: stroke fill; */
 }
-
 
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {

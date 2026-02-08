@@ -279,10 +279,10 @@ export const ParallaxStack = ({ pinDuration = 3500 }: ParallaxStackProps) => {
   }, [pinDuration]);
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden bg-background">
       <section
         ref={parallaxRef}
-        className="relative w-full overflow-hidden"
+        className="relative w-full"
         style={{
           // ✅ alto estable (evita saltos por barra Android); el ancho queda constante
           height: "var(--vhpx, 100vh)",

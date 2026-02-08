@@ -122,7 +122,7 @@ function NavigationLink({
           ease: [0.25, 0.46, 0.45, 0.94],
         }}
       >
-        <span className='whitespace-nowrap text-outline'>{children}</span>
+        <span className='whitespace-nowrap'>{children}</span>
 
         <ChevronRight
           className="text-nav-text-hover shrink-0 w-8 h-8 sm:w-12 sm:h-12"
