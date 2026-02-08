@@ -8,7 +8,7 @@ export const HamburgerButton = () => {
   return (
     <button
       onClick={toggleNavigation}
-      className={cn('transition-colors duration-200 cursor-pointer z-51 mx-4', isNavigationOpen ? 'text-nav-foreground' : 'text-nav-background')}
+      className={cn('transition-colors duration-200 cursor-pointer z-51 mx-2', isNavigationOpen ? 'text-nav-foreground' : 'text-nav-background')}
       aria-label={isNavigationOpen ? 'Close navigation' : 'Open navigation'}
     >
       <motion.div

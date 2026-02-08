@@ -27,16 +27,13 @@ const currentPath = Astro.url.pathname;
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Imperial+Script&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <title>{pageTitle} - Iker Eta Nerea</title>
   </head>
   <body class="antialiased">
     <PageLoader client:load />
-    <div class="fixed top-6 right-6 z-51 flex justify-end pointer-events-none [&>*]:pointer-events-auto">
+    <div class="fixed top-6 right-1 md:right-6 z-51 flex justify-end pointer-events-none *:pointer-events-auto">
       <HamburgerButton client:load />
     </div>
     <Navigation client:load locale={locale} currentPath={currentPath} />

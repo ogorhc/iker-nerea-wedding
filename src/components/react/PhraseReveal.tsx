@@ -192,7 +192,7 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
 
 
               if (typeof window !== "undefined") {
-                fireForegroundConfetti(fg);
+                // fireForegroundConfetti(fg);
               }
             }
           },

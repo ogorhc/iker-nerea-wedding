@@ -181,7 +181,7 @@ export function HeroMarqueeWeGetMarried() {
                 <div className="flex w-max animate-hero-marquee">
                   <span
                     className="
-                      font-family-imperial-script font-normal text-background whitespace-nowrap pr-[1.5ch] shrink-0
+                      font-family-title font-normal text-background whitespace-nowrap pr-[1.5ch] shrink-0
                       text-[20rem] sm:text-[25rem] md:text-[30rem] lg:text-[35rem] xl:text-[40rem]
                       leading-none
                     "
@@ -190,7 +190,7 @@ export function HeroMarqueeWeGetMarried() {
                   </span>
                   <span
                     className="
-                      font-family-imperial-script font-normal text-background whitespace-nowrap pr-[1.5ch] shrink-0
+                      font-family-title font-normal text-background whitespace-nowrap pr-[1.5ch] shrink-0
                       text-[20rem] sm:text-[25rem] md:text-[30rem] lg:text-[35rem] xl:text-[40rem]
                       leading-none
                     "
@@ -202,7 +202,6 @@ export function HeroMarqueeWeGetMarried() {
               </div>
             </div>
 
-            {/* Si tienes “texto trasero” en esta sección, ponlo aquí y usa h-full / inset-0 según necesites */}
           </div>
         )}
       </InverseHoverParallax>

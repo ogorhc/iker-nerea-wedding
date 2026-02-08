@@ -2,7 +2,7 @@
 
 :root {
   --font-montserrat: 'Montserrat', sans-serif;
-  --font-imperial-script: 'Imperial Script', cursive;
+  --font-title: 'Cinzel Decorative', cursive;
   /* Primary colors */
   --background: #e1eacd;
   --foreground: #00292b;
@@ -30,7 +30,6 @@
 
   /* Font families */
   --font-primary: var(--font-montserrat);
-  --font-title: var(--font-imperial-script);
 }
 
 @theme {
@@ -63,8 +62,86 @@
   --font-family-primary: var(--font-primary);
   --font-family-title: var(--font-title);
   --font-family-montserrat: var(--font-montserrat);
-  --font-family-imperial-script: var(--font-imperial-script);
+  --font-family-title: var(--font-title);
 }
+
+.montserrat-100 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.montserrat-200 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.montserrat-300 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.montserrat-400 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.montserrat-500 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.montserrat-600 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.montserrat-700 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.montserrat-800 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.montserrat-900 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.cinzel-decorative-400 {
+  font-family: "Cinzel Decorative", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.cinzel-decorative-700 {
+  font-family: "Cinzel Decorative", cursive;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
 
 /* @media (prefers-color-scheme: dark) {
   :root {
@@ -89,10 +166,10 @@ body {
   font-style: normal;
 }
 
-/* Imperial Script for main titles */
+/* Cinzel Decorative for main titles */
 h1,
 .font-title {
-  font-family: var(--font-imperial-script), cursive;
+  font-family: var(--font-title), cursive;
   font-weight: 400;
   font-style: normal;
 }
@@ -101,19 +178,36 @@ span.text-outline,
 h1.text-outline {
   -webkit-text-stroke: 2px var(--nav-text-inactive);
 
+  /* Mejor que color: transparent en Android Chrome */
+  -webkit-text-fill-color: transparent;
   color: transparent;
 
-  font-family: 'Arial', sans-serif;
+  /* Ayuda a que stroke/fill se compongan mejor */
+  paint-order: stroke fill;
+
+  /* Reduce "tiles" / cortes en algunos devices */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+
+  font-family: "Arial", sans-serif;
   text-align: center;
 }
 
+/* Si estás usando spans por letra, esto ayuda bastante */
+span.text-outline {
+  /* Evita artefactos por capas/tiles */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Hover */
 .text-outline:hover,
 .text-outline:focus-visible {
   -webkit-text-stroke: 0.5px var(--nav-text-hover);
   -webkit-text-fill-color: var(--nav-text-hover);
   color: var(--nav-text-hover);
-  /* paint-order: stroke fill; */
 }
+
 
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
