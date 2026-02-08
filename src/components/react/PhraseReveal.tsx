@@ -18,9 +18,7 @@ function tokenizeByWords(text: string): Token[] {
   return parts
     .filter((p) => p.length > 0)
     .map((p) =>
-      p.trim().length === 0
-        ? { type: "space", value: p }
-        : { type: "word", value: p }
+      p.trim().length === 0 ? { type: "space", value: p } : { type: "word", value: p }
     );
 }
 
@@ -39,12 +37,19 @@ function splitByDot(phrase: string): { head: string; last: string } {
   return { head, last };
 }
 
+// ✅ Convierte el head en frases, preservando el punto al final
+function splitHeadSentences(head: string): string[] {
+  return head
+    .split(".")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => `${s}.`);
+}
+
 // 🔹 Genera variantes rgba con diferentes opacidades
 function hexToRgb(hex: string) {
   const cleaned = hex.replace("#", "").trim();
-  const full = cleaned.length === 3
-    ? cleaned.split("").map((c) => c + c).join("")
-    : cleaned;
+  const full = cleaned.length === 3 ? cleaned.split("").map((c) => c + c).join("") : cleaned;
 
   if (!/^[0-9a-fA-F]{6}$/.test(full)) return null;
 
@@ -54,13 +59,9 @@ function hexToRgb(hex: string) {
   return { r, g, b };
 }
 
-function colorToRgbaVariants(
-  color: string,
-  alphas = [1, 0.8, 0.6, 0.4, 0.25]
-) {
+function colorToRgbaVariants(color: string, alphas = [1, 0.8, 0.6, 0.4, 0.25]) {
   const c = color.trim();
 
-  // rgb/rgba(...)
   const m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
   if (m) {
     const r = Number(m[1]);
@@ -69,20 +70,17 @@ function colorToRgbaVariants(
     return alphas.map((a) => `rgba(${r},${g},${b},${a})`);
   }
 
-  // #RRGGBB / #RGB
   if (c.startsWith("#")) {
     const rgb = hexToRgb(c);
     if (!rgb) return ["rgba(0,0,0,1)"];
     return alphas.map((a) => `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`);
   }
 
-  // fallback
   return ["rgba(0,0,0,1)"];
 }
 
 function fireForegroundConfetti(color: string) {
   const colors = ["#00292b"];
-
   const c = confetti.create(undefined, { resize: true, useWorker: true });
 
   c({
@@ -112,7 +110,7 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
   const { t } = useTranslation(locale);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const headRef = useRef<HTMLParagraphElement>(null);
+  const headRef = useRef<HTMLDivElement>(null); // ✅ ahora es wrapper, no <p>
   const lastRef = useRef<HTMLParagraphElement>(null);
 
   const headWordRefs = useRef<HTMLSpanElement[]>([]);
@@ -123,7 +121,7 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
   const phrase = t("phrase");
 
   const { head, last } = useMemo(() => splitByDot(phrase), [phrase]);
-  const headTokens = useMemo(() => tokenizeByWords(head), [head]);
+  const headSentences = useMemo(() => splitHeadSentences(head), [head]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -133,29 +131,26 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
       const lastEl = lastRef.current;
       if (!headEl || !lastEl) return;
 
-      // Estado inicial
       gsap.set(headWordRefs.current, { opacity: 0.2 });
-      gsap.set(lastEl, { opacity: 0, scale: 0.98 });
+      gsap.set(lastEl, { opacity: 0, scale: 0 });
 
-      // 1) Reveal palabras del bloque superior
       gsap.to(headWordRefs.current, {
         opacity: 1,
-        stagger: 0.06,
+        stagger: 0.5,
         ease: "none",
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 60%",
-          end: "bottom 100%",
+          start: "top 50%",
+          end: "center center",
           scrub: 1,
         },
       });
 
-      // 2) Transición a última frase
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 0%",
-          end: "top 10%",
+          start: "top 20%",
+          end: "center 0%",
           scrub: 1,
         },
       });
@@ -163,7 +158,7 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
       tl.to(
         headEl,
         {
-          opacity: 0,
+          opacity: 0.1,
           y: -16,
           ease: "none",
         },
@@ -172,15 +167,13 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
         lastEl,
         {
           opacity: 1,
-          scale: 1,
+          scale: 1.5,
           y: 0,
           ease: "none",
           onUpdate: () => {
             if (confettiFiredRef.current) return;
 
-            const currentOpacity = Number(
-              gsap.getProperty(lastEl, "opacity")
-            );
+            const currentOpacity = Number(gsap.getProperty(lastEl, "opacity"));
 
             if (currentOpacity >= 0.25) {
               confettiFiredRef.current = true;
@@ -188,8 +181,6 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
               const fg = getComputedStyle(document.documentElement)
                 .getPropertyValue("--color-foreground")
                 .trim();
-              console.log(fg);
-
 
               if (typeof window !== "undefined") {
                 // fireForegroundConfetti(fg);
@@ -203,7 +194,7 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
       tl.to(
         lastEl,
         {
-          letterSpacing: "0.01em",
+          letterSpacing: "0.05em",
           ease: "none",
         },
         0
@@ -230,35 +221,44 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
     >
       <div className="relative w-full max-w-[70rem]">
         {head && (
-          <p
+          <div
             ref={headRef}
             className="
-              text-center font-family-montserrat font-semibold text-foreground
+              text-center font-family-montserrat text-foreground
+              font-semibold
               text-2xl leading-tight
               sm:text-3xl
               md:text-4xl
               lg:text-6xl lg:leading-[1.1]
               mx-auto
+              flex flex-col gap-10
             "
           >
-            {headTokens.map((token, i) => {
-              if (token.type === "space")
-                return <span key={`hs-${i}`}>{" "}</span>;
+            {headSentences.map((sentence, sIdx) => {
+              const tokens = tokenizeByWords(sentence);
 
               return (
-                <span
-                  key={`hw-${i}-${token.value}`}
-                  ref={(el) => {
-                    if (el) headWordRefs.current.push(el);
-                  }}
-                  className="inline-block whitespace-nowrap"
-                  style={{ opacity: 0.2 }}
-                >
-                  {token.value}
-                </span>
+                <p key={`sent-${sIdx}`} className="m-0">
+                  {tokens.map((token, i) => {
+                    if (token.type === "space") return <span key={`hs-${sIdx}-${i}`}>{" "}</span>;
+
+                    return (
+                      <span
+                        key={`hw-${sIdx}-${i}-${token.value}`}
+                        ref={(el) => {
+                          if (el) headWordRefs.current.push(el);
+                        }}
+                        className="inline-block whitespace-nowrap"
+                        style={{ opacity: 0.2 }}
+                      >
+                        {token.value}
+                      </span>
+                    );
+                  })}
+                </p>
               );
             })}
-          </p>
+          </div>
         )}
 
         <p
@@ -267,7 +267,8 @@ export function PhraseReveal({ locale }: PhraseRevealProps) {
             mt-8
             inset-0
             flex items-center justify-center
-            text-center font-family-montserrat font-semibold text-foreground
+            font-extrabold
+            text-center font-family-montserrat text-foreground
             px-2
             text-3xl leading-tight
             sm:text-4xl

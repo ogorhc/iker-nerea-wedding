@@ -24,7 +24,6 @@ function InverseHoverParallax({
   const currentRef = useRef<Offset>({ x: 0, y: 0 });
   const offsetRef = currentRef;
 
-  // Detectar si tiene “hover real” (mouse/trackpad). En móvil lo desactivamos.
   const canHoverRef = useRef<boolean>(true);
 
   useEffect(() => {
@@ -122,28 +121,25 @@ function ParallaxLayer({
 
 export function HeroMarqueeWeGetMarried() {
   const repeatedPhrases = useMemo(
-    () =>
-      [
-        ...weGetMarriedPhrases,
-        ...weGetMarriedPhrases,
-        ...weGetMarriedPhrases,
-        ...weGetMarriedPhrases,
-        ...weGetMarriedPhrases,
-        ...weGetMarriedPhrases,
-      ],
+    () => [
+      ...weGetMarriedPhrases,
+      ...weGetMarriedPhrases,
+      ...weGetMarriedPhrases,
+      ...weGetMarriedPhrases,
+      ...weGetMarriedPhrases,
+      ...weGetMarriedPhrases,
+    ],
     []
   );
 
   return (
     <section className="min-h-screen w-full">
       <InverseHoverParallax
-        // ✅ NO h-screen: min-height responsive y estable
         className="relative bg-foreground overflow-hidden min-h-[50vh] md:min-h-screen flex items-stretch justify-center"
         maxOffsetPx={28}
         lerp={0.1}
       >
         {({ offsetRef }) => (
-          // ✅ el contenedor interno ahora ocupa todo el alto disponible
           <div className="relative w-full min-h-screen md:min-h-screen flex items-stretch">
             {/* Background */}
             <ParallaxLayer
@@ -169,29 +165,44 @@ export function HeroMarqueeWeGetMarried() {
               ))}
             </ParallaxLayer>
 
-            {/* ✅ Gradiente por encima del background */}
+            {/* Gradiente */}
             <div
               className="absolute inset-0 pointer-events-none bg-linear-to-r from-foreground/90 via-foreground/0 to-foreground/90 z-10"
               aria-hidden="true"
             />
 
-            {/* ✅ Marquee centrado SIEMPRE (capa completa) */}
+            {/* Marquee */}
             <div className="absolute inset-0 z-20 flex items-center">
               <div className="w-full overflow-hidden">
-                <div className="flex w-max animate-hero-marquee">
+                <div className="flex w-max animate-hero-marquee items-center">
+                  {/* 1 */}
                   <span
                     className="
                       font-family-title font-normal text-background whitespace-nowrap pr-[1.5ch] shrink-0
-                      text-[20rem] sm:text-[25rem] md:text-[30rem] lg:text-[35rem] xl:text-[40rem]
+                      text-[20rem] sm:text-[20rem] md:text-[25rem] lg:text-[30rem] xl:text-[35rem]
                       leading-none
                     "
                   >
                     Nerea & Iker
                   </span>
+
+                  {/* 2 */}
                   <span
                     className="
                       font-family-title font-normal text-background whitespace-nowrap pr-[1.5ch] shrink-0
-                      text-[20rem] sm:text-[25rem] md:text-[30rem] lg:text-[35rem] xl:text-[40rem]
+                      text-[20rem] sm:text-[20rem] md:text-[25rem] lg:text-[30rem] xl:text-[35rem]
+                      leading-none
+                    "
+                    aria-hidden="true"
+                  >
+                    Nerea & Iker
+                  </span>
+
+                  {/* 3 (extra para evitar huecos) */}
+                  <span
+                    className="
+                      font-family-title font-normal text-background whitespace-nowrap pr-[1.5ch] shrink-0
+                      text-[20rem] sm:text-[20rem] md:text-[25rem] lg:text-[30rem] xl:text-[35rem]
                       leading-none
                     "
                     aria-hidden="true"
@@ -201,7 +212,6 @@ export function HeroMarqueeWeGetMarried() {
                 </div>
               </div>
             </div>
-
           </div>
         )}
       </InverseHoverParallax>
